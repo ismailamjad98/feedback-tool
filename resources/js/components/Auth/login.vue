@@ -63,7 +63,12 @@ export default {
     },
     methods: {
         async login() {
-            this.$store.dispatch('login', this.auth);
+            try {
+                await this.$store.dispatch('login', this.auth);
+                this.$router.push({ name: 'dashboard' });
+            } catch (error) {
+                this.$toast.error(error, { position: 'top-right' });
+            }
         },
     }
 }

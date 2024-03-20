@@ -17,14 +17,22 @@ const app = createApp({});
 
 import router from './router';
 import store from './store/userStore';
+//Sweet Alerts
 import VueSweetalert2 from 'vue-sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css';
+
+import ToastPlugin from 'vue-toast-notification';
+// Import one of the available themes
+//import 'vue-toast-notification/dist/theme-default.css';
+import 'vue-toast-notification/dist/theme-bootstrap.css';
+
 /**
  * Finally, we will attach the application instance to a HTML element with
  * an "id" attribute of "app". This element is included with the "auth"
  * scaffolding. Otherwise, you will need to add an element yourself.
  */
 
-app.use(store)
-app.use(VueSweetalert2)
+app.use(store);
+app.use(ToastPlugin);
+app.use(VueSweetalert2);
 app.use(router).mount('#app');

@@ -107,10 +107,12 @@ export default {
         deleteFeedback(id) {
             axios.delete(`/api/feedback/delete/${id}`).then((res) => {
                 this.feedbacks = this.feedbacks.filter((item) => item.id != id);
+                this.$toast.success("Deleted Successfully", {
+                    position: 'top-right'
+                })
             }).catch((error) => {
                 console.log(error);
             }).finally(() => {
-                this.$swal('Deleted', 'Deleted Succesfully', 'delete')
 
             });
         },
