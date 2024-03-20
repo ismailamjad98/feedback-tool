@@ -8,35 +8,6 @@
         </div>
         <hr>
         <div>
-            <!-- <table class="table table-hover">
-                <thead>
-                    <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Title</th>
-                        <th scope="col">Description</th>
-                        <th scope="col">Posted By</th>
-                        <th scope="col">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="(feedback, index) in feedbacks" :key="index">
-                        <th scope="row">{{ index + 1 }}</th>
-                        <td>{{ feedback.title }}</td>
-                        <td>{{ feedback.description }}</td>
-                        <td>{{ feedback.user.full_name }}</td>
-                        <td>
-                            <img src="https://icons.veryicon.com/png/o/miscellaneous/linear-small-icon/edit-246.png"
-                                width="20" height="20" class="cursor-pointer mx-3">
-                                <img src="https://icons.veryicon.com/png/o/miscellaneous/web-4/preview-80.png"
-                                width="20" height="20" class="cursor-pointer mx-3">
-                                
-                            <img src="https://cdn-icons-png.freepik.com/512/166/166475.png" width="20" height="20"
-                                class="cursor-pointer">
-                        </td>
-                    </tr>
-                </tbody>
-            </table> -->
-
             <div class="card border-top border-gray-200 mt-3">
                 <div class="card-body d-flex align-items-start p-4" v-for="(feedback, index) in feedbacks" :key="index">
                     <div class="gap-2 d-grid">
@@ -64,7 +35,10 @@
                                         style="object-fit: cover;">
                                 </div>
                                 <div class="flex-grow-1 px-4">
-                                    <input class="form-control border-2 mb-3" type="text" v-model="comment">
+                                    <at-ta :members="members">
+                                        <textarea v-model="comment" class="form-control border-2 mb-3"></textarea>
+                                    </at-ta>
+
                                     <button @click="reply(feedback.id)" class="btn btn-dark">Reply</button>
                                     <button @click="toggleInput(feedback.id)" class="btn">Cancel</button>
                                 </div>
@@ -95,12 +69,17 @@
 </template>
 
 <script>
+import At from 'vue-at'
+import AtTa from 'vue-at/dist/vue-at-textarea' // for textarea
+
 export default {
+    components: { At, AtTa },
     data() {
         return {
             feedbacks: [],
             showInput: false,
             comment: null,
+            members: []
         }
     },
     methods: {
@@ -152,10 +131,31 @@ export default {
             const date = new Date(dateString);
             const options = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
             return new Intl.DateTimeFormat('en-US', options).format(date);
+        },
+
+        getAllUsers() {
+            axios.get('/api/users').then((res) => {
+                let users = res.data.users;
+                users.forEach(user => {
+                    this.members.push(user.full_name);
+                });
+            }).catch((error) => {
+                console.error(error);
+            }).finally(() => {
+            });
+        },
+
+        formatMessage(message) {
+            // Regular expression to match @username
+            const mentionRegex = /@(\w+)/g;
+            // Replace @username with <b>username</b>
+            return message.replace(mentionRegex, "<b>$1</b>");
         }
+
     },
     mounted() {
         this.getFeedbacks();
+        this.getAllUsers();
     }
 }
 </script>
